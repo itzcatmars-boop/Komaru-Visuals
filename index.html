@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Komaru visuals | Next-gen experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #a855f7;
+            --accent: #00f2ff;
+            --bg: #030303;
+            --glass: rgba(255, 255, 255, 0.02);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; scroll-behavior: smooth; }
+        body {
+            margin: 0; font-family: 'Inter', sans-serif;
+            background: var(--bg); color: #fff; overflow-x: hidden;
+        }
+
+        .bg-glow {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% -20%, #1a0b2e 0%, #030303 80%);
+            z-index: -1;
+        }
+
+        /* Анимация появления */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+
+        /* ШАПКА */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 8%; position: fixed; width: 100%; top: 0;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); z-index: 1000;
+        }
+
+        /* ЛОГОТИП */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .logo-container:hover { transform: scale(1.02); }
+
+        .main-logo-svg {
+            width: 35px;
+            height: 35px;
+            filter: drop-shadow(0 0 8px var(--primary));
+        }
+
+        .logo-text { font-size: 22px; font-weight: 900; letter-spacing: -1px; }
+        .logo-text span { color: var(--primary); }
+
+        nav { display: flex; align-items: center; }
+        nav a { color: #888; text-decoration: none; margin-right: 30px; font-size: 14px; transition: 0.3s; font-weight: 600; }
+        nav a:hover { color: #fff; }
+
+        /* ПРОФИЛЬ WEXSIDE */
+        .profile-widget {
+            display: flex; align-items: center; background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border); padding: 6px 15px 6px 6px; border-radius: 14px;
+            cursor: pointer; transition: 0.3s;
+        }
+        .profile-widget:hover { background: rgba(255,255,255,0.08); border-color: var(--primary); }
+        .p-avatar {
+            width: 34px; height: 34px; background: var(--primary); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; margin-right: 12px;
+        }
+        .p-name { font-size: 13px; font-weight: 700; display: block; }
+        .p-id { font-size: 9px; color: #555; text-transform: uppercase; font-weight: 800; }
+
+        .btn-buy-nav {
+            background: #fff; color: #000; padding: 10px 20px; border-radius: 12px;
+            cursor: pointer; font-weight: 800; border: none; transition: 0.3s;
+        }
+        .btn-buy-nav:hover { background: var(--primary); color: #fff; }
+
+        /* HERO */
+        .hero { height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .hero h1 { font-size: clamp(50px, 8vw, 100px); font-weight: 900; margin: 0; letter-spacing: -4px; line-height: 0.9; }
+        .hero h1 span { color: var(--primary); }
+        .hero p { color: #666; max-width: 600px; font-size: 18px; margin: 25px 0 40px; }
+
+        .hero-btns { display: flex; gap: 20px; }
+        .btn-main {
+            background: var(--primary); color: #fff; padding: 18px 45px; border-radius: 15px;
+            text-decoration: none; font-weight: 900; transition: 0.3s; box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+        }
+        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(168, 85, 247, 0.5); }
+        .btn-outline { background: var(--glass); border: 1px solid var(--border); }
+
+        /* ФУНКЦИИ (20 КАРТОЧЕК) */
+        .section-title { text-align: center; margin: 100px 0 50px; }
+        .section-title h2 { font-size: 45px; font-weight: 900; margin: 0; }
+        .section-title p { color: var(--primary); text-transform: uppercase; letter-spacing: 4px; font-size: 12px; font-weight: 700; }
+
+        .features-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px; padding: 0 10% 100px; perspective: 1000px;
+        }
+
+        .card-3d-wrap { height: 180px; position: relative; transition: all 0.1s ease; transform-style: preserve-3d; }
+        .card-3d {
+            width: 100%; height: 100%; background: var(--glass); border-radius: 20px;
+            border: 1px solid var(--border); padding: 25px; position: relative;
+            backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: center;
+        }
+        .card-3d-wrap::before {
+            content: ''; position: absolute; inset: -1px; background: linear-gradient(45deg, var(--primary), var(--accent));
+            border-radius: 21px; z-index: -1; opacity: 0; transition: 0.3s;
+        }
+        .card-3d-wrap:hover::before { opacity: 0.5; }
+        .card-3d h3 { font-size: 18px; margin: 0 0 8px 0; color: #fff; }
+        .card-3d p { font-size: 13px; color: #555; margin: 0; line-height: 1.4; }
+
+        /* МОДАЛКИ */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(30px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-content { background: #080808; border: 1px solid var(--border); width: 380px; padding: 40px; border-radius: 35px; text-align: center; }
+        input { width: 100%; background: #000; border: 1px solid #222; padding: 16px; border-radius: 12px; color: #fff; margin-bottom: 15px; outline: none; }
+        .auth-btn { width: 100%; padding: 16px; border-radius: 12px; border: none; background: #fff; color: #000; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .auth-btn:hover { background: var(--primary); color: #fff; }
+
+        .hidden { display: none; }
+        footer { text-align: center; padding: 40px; color: #222; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<header>
+    <div class="logo-container" onclick="window.scrollTo(0,0)">
+        <svg class="main-logo-svg" viewBox="0 0 100 100">
+            <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#00f2ff;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="45" stroke="url(#grad1)" stroke-width="6" fill="none" stroke-dasharray="200" />
+            <path d="M35 30 V70 M35 50 L65 30 M45 55 L65 70" stroke="white" stroke-width="8" stroke-linecap="round" fill="none" />
+        </svg>
+        <div class="logo-text">Komaru <span>visuals</span></div>
+    </div>
+    <nav>
+        <a href="#features">Функции</a>
+        <a href="#" onclick="openAuth()">Купить</a>
+        <div id="auth-zone">
+            <button class="btn-buy-nav" onclick="openAuth()">Войти</button>
+        </div>
+    </nav>
+</header>
+
+<section class="hero">
+    <p class="animate-in delay-1" style="color:var(--primary); font-weight: 800; letter-spacing: 5px; margin-bottom: 5px;">EXCLUSIVE PROJECT</p>
+    <h1 class="animate-in">Komaru<br><span>visuals</span></h1>
+    <p class="animate-in delay-2">Профессиональный софт для Minecraft. 20+ уникальных модулей, стабильная работа и лучший визуал за 149 ₽.</p>
+    <div class="hero-btns animate-in delay-2" style="margin-top: 20px;">
+        <button class="btn-main" onclick="openAuth()">Купить — 149 ₽</button>
+        <a href="#features" class="btn-main btn-outline" style="text-decoration: none;">Функции</a>
+    </div>
+</section>
+
+<div class="section-title" id="features">
+    <p>Modules List</p>
+    <h2>Возможности софта</h2>
+</div>
+
+<section class="features-grid" id="features-container">
+    <!-- Генерируется через JS -->
+</section>
+
+<!-- МОДАЛКА ВХОДА -->
+<div class="modal" id="auth-modal">
+    <div class="modal-content">
+        <h2 id="auth-title">Вход</h2>
+        <input type="text" id="username" placeholder="Логин">
+        <input type="password" id="password" placeholder="Пароль">
+        <button class="auth-btn" onclick="handleAuth()" id="auth-btn-text">Продолжить</button>
+        <p style="font-size: 11px; color: #444; margin-top: 15px; cursor: pointer;" onclick="toggleAuthMode()" id="toggle-text">Создать аккаунт</p>
+        <p onclick="closeModal()" style="color: #666; font-size: 12px; margin-top: 20px; cursor: pointer;">Закрыть</p>
+    </div>
+</div>
+
+<!-- МОДАЛКА ЛИЧНОГО КАБИНЕТА -->
+<div class="modal" id="cabinet-modal">
+    <div class="modal-content">
+        <h2>Кабинет</h2>
+        <div id="activate-box">
+            <p style="font-size: 13px; color: #555; margin-bottom: 20px;">Для покупки (149₽) напишите нашему боту:</p>
+            <button class="auth-btn" style="background: var(--accent); color: #000; margin-bottom: 20px;" onclick="window.open('https://t.me/KomaruVisualsBot')">Купить в Telegram</button>
+            <input type="text" id="promo-code" placeholder="Введите полученный код">
+            <button class="auth-btn" style="background: var(--primary); color: #fff;" onclick="activate()">Активировать код</button>
+        </div>
+        <div id="download-box" class="hidden">
+            <p style="color: var(--accent); font-weight: 800; margin-bottom: 15px;">ПОДПИСКА АКТИВИРОВАНА</p>
+            <a href="komaru_visuals.zip" class="auth-btn" style="display: block; text-decoration: none; background: var(--accent);" download>СКАЧАТЬ СОФТ</a>
+        </div>
+        <button onclick="logout()" style="background: transparent; border: none; color: #ff4d4d; margin-top: 30px; cursor: pointer; font-weight: 700;">Выйти</button>
+        <p onclick="closeModal()" style="color: #666; font-size: 12px; margin-top: 20px; cursor: pointer;">Назад</p>
+    </div>
+</div>
+
+<footer>Komaru visuals &copy; 2024. All rights reserved.</footer>
+
+<script>
+    // 20 ФУНКЦИЙ
+    const modules = [
+        { n: "ESP Player", d: "Отображение игроков через стены с HP и дистанцией." },
+        { n: "Glow Chams", d: "Стильная подсветка моделей с мягким свечением." },
+        { n: "Tracers", d: "Линии к ближайшим целям для быстрой ориентации." },
+        { n: "Ambience", d: "Кастомное время суток, цвет неба и тумана." },
+        { n: "Nametags", d: "Улучшенные ники с показом брони и активных чар." },
+        { n: "Motion Blur", d: "Кинематографичное размытие для плавной картинки." },
+        { n: "Full Bright", d: "Идеальная видимость даже в полной темноте." },
+        { n: "X-Ray", d: "Поиск алмазов и других руд сквозь блоки." },
+        { n: "Breadcrumbs", d: "Линия вашего пути для навигации в шахтах." },
+        { n: "Trail", d: "Красивый шлейф за персонажем при движении." },
+        { n: "Item ESP", d: "Подсветка всех валяющихся предметов на земле." },
+        { n: "Shield ESP", d: "Отображение КД щита и его прочности у врагов." },
+        { n: "Block Overlay", d: "Кастомное выделение блока под прицелом." },
+        { n: "Weather Control", d: "Мгновенное отключение дождя для буста FPS." },
+        { n: "Skybox", d: "Замена обычного неба на космическое или HDR." },
+        { n: "Chunk Animator", d: "Плавная анимация прогрузки мира." },
+        { n: "Particle Mod", d: "Настройка внешнего вида и количества частиц." },
+        { n: "FOV Changer", d: "Увеличенный угол обзора без искажения центра." },
+        { n: "Zoom Mod", d: "Приближение камеры нажатием одной клавиши." },
+        { n: "Damage Tilt", d: "Реалистичный наклон экрана при получении хита." }
+    ];
+
+    const container = document.getElementById('features-container');
+    modules.forEach((m, i) => {
+        container.innerHTML += `
+            <div class="card-3d-wrap" onmousemove="tilt(event, this)" onmouseleave="resetTilt(this)">
+                <div class="card-3d">
+                    <span style="font-size: 10px; color: var(--primary); font-weight: 800; margin-bottom: 5px;">MODULE 0${i+1}</span>
+                    <h3>${m.n}</h3>
+                    <p>${m.d}</p>
+                </div>
+            </div>`;
+    });
+
+    function tilt(e, card) {
+        const r = card.getBoundingClientRect();
+        const x = e.clientX - r.left; const y = e.clientY - r.top;
+        const rotateX = (y - r.height/2) / 8; const rotateY = (r.width/2 - x) / 8;
+        card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    }
+    function resetTilt(c) { c.style.transform = `rotateX(0deg) rotateY(0deg)`; }
+
+    /* AUTH LOGIC */
+    let isLogin = true;
+    let currentUser = JSON.parse(localStorage.getItem('userSession')) || null;
+    const CODES = ["BUY-149", "ADMIN-FREE"]; 
+
+    updateHeader();
+
+    function openAuth() {
+        if(currentUser) { document.getElementById('cabinet-modal').style.display = 'flex'; renderCabinet(); }
+        else { document.getElementById('auth-modal').style.display = 'flex'; }
+    }
+    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+    function toggleAuthMode() {
+        isLogin = !isLogin;
+        document.getElementById('auth-title').innerText = isLogin ? "Вход" : "Регистрация";
+        document.getElementById('auth-btn-text').innerText = isLogin ? "Войти" : "Создать";
+    }
+
+    function handleAuth() {
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('password').value;
+        if(!u || !p) return alert("Заполни поля!");
+        let db = JSON.parse(localStorage.getItem('usersDB') || "[]");
+        if(isLogin) {
+            const user = db.find(x => x.username === u && x.password === p);
+            if(user) { successAuth(user); } else { alert("Ошибка авторизации!"); }
+        } else {
+            if(db.find(x => x.username === u)) return alert("Логин занят!");
+            const newUser = { username: u, password: p, access: false, id: Math.floor(Math.random()*9999) };
+            db.push(newUser); localStorage.setItem('usersDB', JSON.stringify(db));
+            successAuth(newUser);
+        }
+    }
+
+    function successAuth(user) {
+        currentUser = user; localStorage.setItem('userSession', JSON.stringify(user));
+        updateHeader(); closeModal();
+    }
+
+    function updateHeader() {
+        const zone = document.getElementById('auth-zone');
+        if(currentUser) {
+            zone.innerHTML = `
+                <div class="profile-widget" onclick="openAuth()">
+                    <div class="p-avatar">${currentUser.username[0].toUpperCase()}</div>
+                    <div class="p-info">
+                        <span class="p-name">${currentUser.username}</span>
+                        <span class="p-id">ID: ${currentUser.id}</span>
+                    </div>
+                </div>`;
+        }
+    }
+
+    function renderCabinet() {
+        if(currentUser.access) {
+            document.getElementById('activate-box').classList.add('hidden');
+            document.getElementById('download-box').classList.remove('hidden');
+        }
+    }
+
+    function activate() {
+        const code = document.getElementById('promo-code').value.toUpperCase();
+        if(CODES.includes(code)) {
+            currentUser.access = true;
+            let db = JSON.parse(localStorage.getItem('usersDB'));
+            let idx = db.findIndex(x => x.username === currentUser.username);
+            db[idx].access = true;
+            localStorage.setItem('usersDB', JSON.stringify(db));
+            localStorage.setItem('userSession', JSON.stringify(currentUser));
+            renderCabinet();
+        } else { alert("Неверный код!"); }
+    }
+
+    function logout() { localStorage.removeItem('userSession'); location.reload(); }
+</script>
+
+</body>
+</html>
